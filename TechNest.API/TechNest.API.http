@@ -1,0 +1,6 @@
+@TechNest.API_HostAddress = http://localhost:5119
+
+GET {{TechNest.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
