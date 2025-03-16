@@ -10,6 +10,7 @@ namespace TechNest.Infrastructure.Data.EntitesConfiguration
         {
             builder.Property(p => p.Name).HasMaxLength(100);
             builder.Property(p => p.Description).HasMaxLength(500);
+
         }
     }
 }

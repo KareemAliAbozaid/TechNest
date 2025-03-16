@@ -1,4 +1,5 @@
 
+using TechNest.Infrastructure;
 namespace TechNest.API
 {
     public class Program
@@ -14,6 +15,8 @@ namespace TechNest.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddInfrastructure(builder.Configuration);
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -26,7 +29,6 @@ namespace TechNest.API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

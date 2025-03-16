@@ -6,15 +6,15 @@ using TechNest.Infrastructure.Data;
 
 namespace TechNest.Infrastructure.Repositores
 {
-    public class Repositores<T> : IRepositores<T> where T : class
+    public class Repository<T> : IRepositores<T> where T : class
     {
-        private readonly ApplicationDbcontext _context;
-        private readonly DbSet<T> _dbSet;
+        protected readonly DbSet<T> _dbSet;
+        protected readonly ApplicationDbcontext _context;
 
-        public Repositores(ApplicationDbcontext context, DbSet<T> dbSet)
+        public Repository(ApplicationDbcontext context)
         {
             _context = context;
-            _dbSet = dbSet;
+            _dbSet = _context.Set<T>();
         }
 
         public IQueryable<T> AsQueryable() => _dbSet.AsNoTracking();

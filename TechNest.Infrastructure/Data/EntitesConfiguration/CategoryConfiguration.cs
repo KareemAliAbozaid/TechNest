@@ -8,7 +8,7 @@ namespace TechNest.Infrastructure.Data.EntitesConfiguration
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
-          builder.Property(p => p.Name).HasMaxLength(100);
+            builder.Property(p => p.Name).HasMaxLength(100);
         }
     }
 }
