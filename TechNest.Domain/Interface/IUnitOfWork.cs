@@ -8,5 +8,7 @@ namespace TechNest.Domain.Interface
         IProductRepository ProductRepository { get; }
         IPhotoRepository PhotoRepository { get; }
 
+        Task<int> SaveChangesAsync();
+
     }
 }

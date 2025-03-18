@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TechNest.Infrastructure.Repositores;
 using Microsoft.Extensions.DependencyInjection;
+using Mapster;
+using MapsterMapper;
+using System.Reflection;
 
 namespace TechNest.Infrastructure
 {
@@ -41,6 +44,12 @@ namespace TechNest.Infrastructure
                     //throw;
                 }
             }
+
+            //Add mapster
+            var mappingConfig = TypeAdapterConfig.GlobalSettings;
+            mappingConfig.Scan(Assembly.GetExecutingAssembly());
+            services.AddSingleton<IMapper>(new Mapper(mappingConfig));
+
             return services;
         }
     }

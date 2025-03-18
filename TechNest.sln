@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechNest.Infrastructure", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechNest.API", "TechNest.API\TechNest.API.csproj", "{45768685-1D0D-430B-80EE-E96143942DA7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechNest.Application", "TechNest.Application\TechNest.Application.csproj", "{12A681C3-7740-439E-94C1-BEF9BBD32456}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,10 @@ Global
 		{45768685-1D0D-430B-80EE-E96143942DA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45768685-1D0D-430B-80EE-E96143942DA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45768685-1D0D-430B-80EE-E96143942DA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12A681C3-7740-439E-94C1-BEF9BBD32456}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12A681C3-7740-439E-94C1-BEF9BBD32456}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12A681C3-7740-439E-94C1-BEF9BBD32456}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12A681C3-7740-439E-94C1-BEF9BBD32456}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -36,6 +42,7 @@ Global
 		{3A157C6A-E288-4635-AE36-129FDA51BE59} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{940BC2FF-BE34-4629-A743-EE0E43A35D89} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{45768685-1D0D-430B-80EE-E96143942DA7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{12A681C3-7740-439E-94C1-BEF9BBD32456} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1EE0BAAB-6C55-4D31-A44D-D293BC4A8288}

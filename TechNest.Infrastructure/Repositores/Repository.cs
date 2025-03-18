@@ -33,6 +33,7 @@ namespace TechNest.Infrastructure.Repositores
             if (entity != null)
             {
                 _dbSet.Remove(entity);
+                await _context.SaveChangesAsync();
                 return true;
             }
             return false;  
@@ -41,7 +42,9 @@ namespace TechNest.Infrastructure.Repositores
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-          return  await _dbSet.AsNoTracking().ToListAsync();
+            return await _dbSet.AsNoTracking()
+                .Where(c => EF.Property<bool>(c, "IsDeleted") == false)
+                .ToListAsync();
         }
 
         public async Task<T?> GetByIdAsync(Guid id)
