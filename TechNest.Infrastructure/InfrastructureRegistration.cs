@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Mapster;
 using MapsterMapper;
 using System.Reflection;
+using TechNest.Application.Services;
+using Microsoft.Extensions.FileProviders;
 
 namespace TechNest.Infrastructure
 {
@@ -17,6 +19,8 @@ namespace TechNest.Infrastructure
             // Register the Repositories and UnitOfWork
             services.AddScoped(typeof(IRepositores<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddSingleton<IImageManagmentService, ImageManagmentService>();
+            services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
 
             // Register the DbContext with a SQL Server provider
             var connectionString = configuration.GetConnectionString("TechNest") ??

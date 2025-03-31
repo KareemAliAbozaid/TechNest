@@ -1,9 +1,12 @@
 ﻿
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations.Schema;
+using TechNest.Domain.Entites;
 
-namespace TechNest.Domain.Entites
+
+namespace TechNest.Application.DTOs.Product
 {
-   public class Product : BaseEntity
+    public record ProductCreateDto
     {
         public string? Name { get; set; }
         public string? Description { get; set; }
@@ -12,7 +15,7 @@ namespace TechNest.Domain.Entites
 
         [ForeignKey(nameof(Category))]
         public Guid CategoryId { get; set; }
-        public Category? Category { get; set; }
-        public ICollection<Photo>? Photos { get; set; }
+        public string? Category { get; set; }
+        public IFormFileCollection? Photos { get; set; }
     }
 }

@@ -5,9 +5,11 @@ namespace TechNest.Domain.Entites
 {
    public class Photo : BaseEntity
     {
-        public string? ImageName { get; set; }
-       
-        [ForeignKey("ProductId")]
+        [ForeignKey(nameof(Product))]
         public Guid ProductId { get; set; }
+        public Product? Product { get; set; }
+        public string? ImageName { get; set; }
+        public DateTime UploadedAt { get; set; }
+
     }
 }

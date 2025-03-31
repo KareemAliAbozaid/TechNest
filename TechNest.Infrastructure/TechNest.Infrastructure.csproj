@@ -15,9 +15,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TechNest.Application\TechNest.Application.csproj" />
     <ProjectReference Include="..\TechNest.Domain\TechNest.Domain.csproj" />
   </ItemGroup>
 
