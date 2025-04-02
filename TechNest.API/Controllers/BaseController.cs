@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TechNest.Domain.Interface;
+using TechNest.Application.Interfaces;
 
 namespace TechNest.API.Controllers
 {

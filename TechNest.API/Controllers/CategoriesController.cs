@@ -2,7 +2,7 @@
 using TechNest.Domain.Entites;
 using Microsoft.AspNetCore.Mvc;
 using TechNest.API.APIResponse;
-using TechNest.Domain.Interface;
+using TechNest.Application.Interfaces;
 using TechNest.Application.DTOs.Category;
 
 namespace TechNest.API.Controllers

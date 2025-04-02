@@ -1,14 +1,14 @@
-﻿using TechNest.Domain.Interface;
-using TechNest.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using TechNest.Infrastructure.Repositores;
-using Microsoft.Extensions.DependencyInjection;
+﻿using TechNest.Application.Interfaces;
 using Mapster;
 using MapsterMapper;
 using System.Reflection;
+using TechNest.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using TechNest.Application.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
+using TechNest.Infrastructure.Repositores;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TechNest.Infrastructure
 {
@@ -16,19 +16,37 @@ namespace TechNest.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+
             // Register the Repositories and UnitOfWork
             services.AddScoped(typeof(IRepositores<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
+
+            // Register the PhysicalFileProvider
+            services.AddSingleton<IFileProvider>(
+                new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
+
+            // Register other services
             services.AddSingleton<IImageManagmentService, ImageManagmentService>();
-            services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
 
-            // Register the DbContext with a SQL Server provider
-            var connectionString = configuration.GetConnectionString("TechNest") ??
-                throw new InvalidOperationException("Connection string 'TechNest' not found.");
-            services.AddDbContext<ApplicationDbcontext>(options =>
-                 options.UseSqlServer(connectionString));
+            return services.RegisterDbContext(configuration)
+                           .AddMapstarConfig()
+                           .PendingMigrations();
+        }
+        private static IServiceCollection AddMapstarConfig(this IServiceCollection services)
+        {
+            //Add mapster
+            var mappingConfig = TypeAdapterConfig.GlobalSettings;
+            mappingConfig.Scan(Assembly.GetExecutingAssembly());
+            services.AddSingleton<IMapper>(new Mapper(mappingConfig));
 
-            // Apply pending migrations at startup
+            return services;
+        }
+
+        private static IServiceCollection PendingMigrations(this IServiceCollection services)
+        {
+            //Pending Migrations
             using (var scope = services.BuildServiceProvider().CreateScope())
             {
                 try
@@ -42,19 +60,24 @@ namespace TechNest.Infrastructure
                 }
                 catch (Exception ex)
                 {
-                    // Optional: log or handle migration errors
-                    // var logger = scope.ServiceProvider.GetRequiredService<ILogger<ServiceCollectionExtensions>>();
-                    // logger.LogError(ex, "An error occurred while migrating the database.");
-                    //throw;
+                    throw;
                 }
             }
-
-            //Add mapster
-            var mappingConfig = TypeAdapterConfig.GlobalSettings;
-            mappingConfig.Scan(Assembly.GetExecutingAssembly());
-            services.AddSingleton<IMapper>(new Mapper(mappingConfig));
-
             return services;
         }
+
+        private static IServiceCollection RegisterDbContext(this IServiceCollection services, IConfiguration configuration)
+        {
+            // Register DbContext
+            var connectionString = configuration.GetConnectionString("TechNest") ??
+              throw new InvalidOperationException("Connection string 'TechNest' not found.");
+            services.AddDbContext<ApplicationDbcontext>(options =>
+                 options.UseSqlServer(connectionString));
+            return services;
+        }
+
+
     }
+
+
 }

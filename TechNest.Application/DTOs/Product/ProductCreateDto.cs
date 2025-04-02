@@ -8,6 +8,7 @@ namespace TechNest.Application.DTOs.Product
 {
     public record ProductCreateDto
     {
+
         public string? Name { get; set; }
         public string? Description { get; set; }
         public decimal NewPrice { get; set; }
@@ -15,7 +16,7 @@ namespace TechNest.Application.DTOs.Product
 
         [ForeignKey(nameof(Category))]
         public Guid CategoryId { get; set; }
-        public string? Category { get; set; }
+        // For file uploads
         public IFormFileCollection? Photos { get; set; }
     }
 }

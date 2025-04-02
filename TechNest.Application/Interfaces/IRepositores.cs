@@ -1,6 +1,6 @@
 ﻿
 
-namespace TechNest.Domain.Interface
+namespace TechNest.Application.Interfaces
 {
     public interface IRepositores<T> where T : class
     {
