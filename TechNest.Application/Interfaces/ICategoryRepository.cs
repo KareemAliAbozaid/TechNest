@@ -1,7 +1,7 @@
 ﻿
 using TechNest.Domain.Entites;
 
-namespace TechNest.Domain.Interface
+namespace TechNest.Application.Interfaces
 {
    public interface ICategoryRepository : IRepositores<Category>
     {

@@ -1,7 +1,7 @@
 ﻿
 
 using Microsoft.EntityFrameworkCore;
-using TechNest.Domain.Interface;
+using TechNest.Application.Interfaces;
 using TechNest.Infrastructure.Data;
 
 namespace TechNest.Infrastructure.Repositores

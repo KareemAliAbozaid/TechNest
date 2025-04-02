@@ -1,5 +1,5 @@
 ﻿using TechNest.Domain.Entites;
-using TechNest.Domain.Interface;
+using TechNest.Application.Interfaces;
 using TechNest.Infrastructure.Data;
 
 namespace TechNest.Infrastructure.Repositores
