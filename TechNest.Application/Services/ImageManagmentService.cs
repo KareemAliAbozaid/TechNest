@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.FileProviders;
-using TechNest.Application.DTOs.Product;
-using TechNest.Application.Interfaces;
 using TechNest.Application.Services;
-using TechNest.Domain.Entites;
+using Microsoft.Extensions.FileProviders;
 
 public class ImageManagmentService : IImageManagmentService
 {
@@ -16,39 +13,34 @@ public class ImageManagmentService : IImageManagmentService
 
     public async Task<List<string>> AddPhotoAsync(IEnumerable<IFormFile> files, string source)
     {
-        var savedImage = new List<string>();
-
-        if (files == null || !files.Any())
+        var filledImages = new List<string>();
+        var imageDirctory = Path.Combine("wwwroot", "StorageFiles", source);
+        if (Directory.Exists(imageDirctory) is not true)
         {
-            return savedImage;
+            Directory.CreateDirectory(imageDirctory);
         }
-
-        var imageDirectory = Path.Combine("wwwroot", "Images", source);
-        if (!Directory.Exists(imageDirectory))
+        foreach (var file in files)
         {
-            Directory.CreateDirectory(imageDirectory);
-        }
-
-        foreach (var image in files)
-        {
-            // Skip null or empty files
-            if (image == null || image.Length == 0)
-                continue;
-
-            var imageName = $"{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
-            var imagePath = Path.Combine("Images", source, imageName);
-            var root = Path.Combine(imageDirectory, imageName);
-
-            using (var stream = new FileStream(root, FileMode.Create))
+            if (file.Length > 0)
             {
-                await image.CopyToAsync(stream);
-            }
+                var imageNames = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                var imagePath = Path.Combine("StorageFiles", source, imageNames);
 
-            savedImage.Add(imagePath);
+                var root = Path.Combine(imageDirctory, imageNames);
+
+                using (var stream = new FileStream(root, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                filledImages.Add(imagePath);
+            }
         }
 
-        return savedImage;
+        return filledImages;
+
     }
+
 
     public void DeleteAsync(string source)
     {
@@ -57,4 +49,5 @@ public class ImageManagmentService : IImageManagmentService
         File.Delete(root);
     }
 }
+
 

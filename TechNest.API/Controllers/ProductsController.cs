@@ -2,10 +2,9 @@
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using TechNest.API.APIResponse;
-using TechNest.Application.DTOs.Category;
-using TechNest.Application.DTOs.Photos;
-using TechNest.Application.DTOs.Product;
 using TechNest.Application.Interfaces;
+using TechNest.Application.DTOs.Product;
+using TechNest.Application.DTOs.Category;
 using TechNest.Domain.Entites;
 
 namespace TechNest.API.Controllers
@@ -61,11 +60,25 @@ namespace TechNest.API.Controllers
                 var result = await _unitOfWork.ProductRepository.AddAsync(productCreateDto);
                 if (!result)
                     return BadRequest(new APIErrorResponse(400, "Failed to add product"));
-
-                return Ok(new { Message = "Product added successfully" });
+                return Ok("Product Added Successfully");
             }
             catch (Exception ex)
             {
+                return StatusCode(500, new APIErrorResponse(500, "An error occurred while processing your request"));
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(UpdateProductDto updateProductDto)
+        {
+            try
+            {
+                await _unitOfWork.ProductRepository.UpdateAsync(updateProductDto);
+                return Ok("Product Added Successfully");
+            }
+            catch (Exception ex)
+            {
+
                 return StatusCode(500, new APIErrorResponse(500, "An error occurred while processing your request"));
             }
         }
