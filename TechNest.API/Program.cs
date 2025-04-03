@@ -1,4 +1,6 @@
 
+using Microsoft.Extensions.Options;
+using TechNest.API.Model;
 using TechNest.Infrastructure;
 namespace TechNest.API
 {
@@ -9,6 +11,8 @@ namespace TechNest.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.Configure<FileUploadSettings>(builder.Configuration.GetSection("FileUploadSettings"));
+            builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<FileUploadSettings>>().Value);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

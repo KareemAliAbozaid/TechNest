@@ -26,7 +26,13 @@ namespace TechNest.Infrastructure.Repositores
             return true;
         }
 
-      
+        public async Task<bool> AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> DeleteAsync(Guid id)
         {
             var entity = await _dbSet.FindAsync(id);

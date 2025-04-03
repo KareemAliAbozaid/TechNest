@@ -13,34 +13,40 @@ public class ImageManagmentService : IImageManagmentService
 
     public async Task<List<string>> AddPhotoAsync(IEnumerable<IFormFile> files, string source)
     {
-        var filledImages = new List<string>();
-        var imageDirctory = Path.Combine("wwwroot", "StorageFiles", source);
-        if (Directory.Exists(imageDirctory) is not true)
+        var savedImage = new List<string>();
+
+        if (files == null || !files.Any())
         {
-            Directory.CreateDirectory(imageDirctory);
+            return savedImage;
         }
-        foreach (var file in files)
+
+        var imageDirectory = Path.Combine("wwwroot", "Images", source);
+        if (!Directory.Exists(imageDirectory))
         {
-            if (file.Length > 0)
+            Directory.CreateDirectory(imageDirectory);
+
+        }
+
+        foreach (var image in files)
+        {
+            // Skip null or empty files
+            if (image == null || image.Length == 0)
+                continue;
+
+            var imageName = $"{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
+            var imagePath = Path.Combine("Images", source, imageName);
+            var root = Path.Combine(imageDirectory, imageName);
+
+            using (var stream = new FileStream(root, FileMode.Create))
             {
-                var imageNames = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                var imagePath = Path.Combine("StorageFiles", source, imageNames);
-
-                var root = Path.Combine(imageDirctory, imageNames);
-
-                using (var stream = new FileStream(root, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-
-                filledImages.Add(imagePath);
+                await image.CopyToAsync(stream);
             }
+
+            savedImage.Add(imagePath);
         }
 
-        return filledImages;
-
+        return savedImage;
     }
-
 
     public void DeleteAsync(string source)
     {

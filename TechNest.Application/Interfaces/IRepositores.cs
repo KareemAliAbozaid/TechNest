@@ -15,5 +15,6 @@ namespace TechNest.Application.Interfaces
         Task<T> UpdateAsync(T entity);
 
         Task<bool> DeleteAsync(Guid id);
+        Task<bool> AddRangeAsync(IEnumerable<T> entities);
     }
 }

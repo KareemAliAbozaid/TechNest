@@ -25,13 +25,16 @@ namespace TechNest.Infrastructure.Repositores
             if (productCreateDto is null)
                 return false;
 
+            // 1. Create and save the product first
             var product = productCreateDto.Adapt<Product>();
             await dbContext.Products.AddAsync(product);
             await dbContext.SaveChangesAsync();
 
+            // 2. Skip photo processing if no photos
             if (productCreateDto.Photos == null || productCreateDto.Photos.Count == 0)
                 return true;
 
+            // 3. Filter out null or empty files BEFORE passing to the service
             var validFiles = new List<IFormFile>();
             foreach (var file in productCreateDto.Photos)
             {
@@ -42,8 +45,10 @@ namespace TechNest.Infrastructure.Repositores
             if (validFiles.Count == 0)
                 return true;
 
+            // 4. Process only the valid files
             var imagePaths = await imageManagmentService.AddPhotoAsync(validFiles, productCreateDto.Name);
 
+            // 5. Create photo entities only for valid paths
             var photos = new List<Photo>();
             foreach (var path in imagePaths)
             {
@@ -57,6 +62,7 @@ namespace TechNest.Infrastructure.Repositores
                 }
             }
 
+            // 6. Save photos to database
             if (photos.Count > 0)
             {
                 await dbContext.Photos.AddRangeAsync(photos);
@@ -65,6 +71,7 @@ namespace TechNest.Infrastructure.Repositores
 
             return true;
         }
+    
 
         // update
         public async Task<bool> UpdateAsync(UpdateProductDto updateProductDto)
