@@ -58,41 +58,118 @@ namespace TechNest.API.Controllers
                 return StatusCode(500, new APIErrorResponse(500, DefaultErrorMessage));
             }
         }
+
+
         [HttpPost]
+        [Consumes("multipart/form-data")]
+        [ProducesResponseType(typeof(APIResponse<ProductCreateDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(APIErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(APIErrorResponse), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Add([FromForm] ProductCreateDto productCreateDto)
         {
             try
             {
                 if (!ModelState.IsValid)
+                {
                     return BadRequest(new APIErrorResponse(400, "Invalid product data"));
+                }
 
+                var product = productCreateDto.Adapt<Product>();
                 var result = await _unitOfWork.ProductRepository.AddAsync(productCreateDto);
-                if (!result)
-                    return BadRequest(new APIErrorResponse(400, "Failed to add product"));
 
-                return Ok(new { Message = "Product added successfully" });
+                if (result == null)            
+                    return BadRequest(new APIErrorResponse(400, "Failed to add product"));
+              
+                // Assume that product is successfully added, and create the response DTO
+                var createdProduct = product.Adapt<GetProductDto>();
+
+                var apiResponse = new APIResponse<GetProductDto>
+                {
+                    Success = true,
+                    Message = "Product created successfully",
+                    Data = createdProduct,
+                    StatusCode = 200,
+                    Timestamp = DateTime.UtcNow
+                };
+
+                return Ok(apiResponse);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, new APIErrorResponse(500, "An error occurred while processing your request"));
+                var errorResponse = new APIErrorResponse(500, "An error occurred while processing your request");
+                return StatusCode(500, errorResponse);
             }
         }
 
 
         [HttpPut]
-        public async Task<IActionResult> Update(UpdateProductDto updateProductDto)
+        [ProducesResponseType(typeof(APIResponse<GetProductDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(APIErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(APIErrorResponse), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Update([FromForm] UpdateProductDto updateProductDto)
         {
             try
             {
-                await _unitOfWork.ProductRepository.UpdateAsync(updateProductDto);
-                return Ok("Product Added Successfully");
-            }
-            catch (Exception ex)
-            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new APIErrorResponse(400, "Invalid product data"));
+                }
 
+                // Try to update product
+                var updatedProduct = await _unitOfWork.ProductRepository.UpdateAsync(updateProductDto);
+
+                if (updatedProduct == null)
+                {
+                    return NotFound(new APIErrorResponse(404, "Product not found or update failed"));
+                }
+
+                // Map to DTO for response
+                var productDto = updatedProduct.Adapt<GetProductDto>();
+
+                var apiResponse = new APIResponse<GetProductDto>
+                {
+                    Success = true,
+                    Message = "Product updated successfully",
+                    Data = productDto,
+                    StatusCode = 200,
+                    Timestamp = DateTime.UtcNow
+                };
+
+                return Ok(apiResponse);
+            }
+            catch (Exception)
+            {
                 return StatusCode(500, new APIErrorResponse(500, "An error occurred while processing your request"));
             }
         }
+
+
+        [HttpDelete("{id:guid}")]
+        [ProducesResponseType(typeof(APIResponse<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(APIErrorResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            try
+            {
+                var product = await _unitOfWork.ProductRepository.GetByIdAsync(id);
+                if (product == null)
+                {
+                    return NotFound(new APIErrorResponse(404, $"Product with ID {id} not found"));
+                }
+
+                product.IsDeleted = true;
+                product.DeletedAt = DateTime.UtcNow;
+                await _unitOfWork.SaveChangesAsync();
+
+                return Ok(new APIResponse<string>(null, $"Product successfully deleted"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting product with ID: {ProductId}", id);
+                return StatusCode(500, new APIErrorResponse(500, DefaultErrorMessage));
+            }
+        }
+
 
         //[HttpPost]
         //[Consumes("multipart/form-data")]
@@ -162,7 +239,7 @@ namespace TechNest.API.Controllers
         //            ProductId = productId,
         //            ImageName = filePath,
         //            UploadedAt = DateTime.UtcNow,
-                  
+
         //        }).ToList();
 
 
