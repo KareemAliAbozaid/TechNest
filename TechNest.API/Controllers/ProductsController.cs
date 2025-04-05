@@ -101,47 +101,21 @@ namespace TechNest.API.Controllers
             }
         }
 
-
         [HttpPut]
-        [ProducesResponseType(typeof(APIResponse<GetProductDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(APIErrorResponse), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(APIErrorResponse), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update([FromForm] UpdateProductDto updateProductDto)
+        public async Task<IActionResult> Update(UpdateProductDto updateProductDto)
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(new APIErrorResponse(400, "Invalid product data"));
-                }
-
-                // Try to update product
-                var updatedProduct = await _unitOfWork.ProductRepository.UpdateAsync(updateProductDto);
-
-                if (updatedProduct == null)
-                {
-                    return NotFound(new APIErrorResponse(404, "Product not found or update failed"));
-                }
-
-                // Map to DTO for response
-                var productDto = updatedProduct.Adapt<GetProductDto>();
-
-                var apiResponse = new APIResponse<GetProductDto>
-                {
-                    Success = true,
-                    Message = "Product updated successfully",
-                    Data = productDto,
-                    StatusCode = 200,
-                    Timestamp = DateTime.UtcNow
-                };
-
-                return Ok(apiResponse);
+                await _unitOfWork.ProductRepository.UpdateAsync(updateProductDto);
+                return Ok(new APIResponse<string>("Product created successfully"));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, new APIErrorResponse(500, "An error occurred while processing your request"));
+
+                return BadRequest();
             }
         }
+        
 
 
         [HttpDelete("{id:guid}")]
