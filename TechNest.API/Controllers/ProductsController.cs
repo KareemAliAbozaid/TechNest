@@ -77,9 +77,9 @@ namespace TechNest.API.Controllers
                 var product = productCreateDto.Adapt<Product>();
                 var result = await _unitOfWork.ProductRepository.AddAsync(productCreateDto);
 
-                if (result == null)            
+                if (result == null)
                     return BadRequest(new APIErrorResponse(400, "Failed to add product"));
-              
+
                 // Assume that product is successfully added, and create the response DTO
                 var createdProduct = product.Adapt<GetProductDto>();
 
@@ -115,7 +115,8 @@ namespace TechNest.API.Controllers
                 return BadRequest();
             }
         }
-        
+
+
 
 
         [HttpDelete("{id:guid}")]
@@ -145,87 +146,87 @@ namespace TechNest.API.Controllers
         }
 
 
-        //[HttpPost]
-        //[Consumes("multipart/form-data")]
-        //[ProducesResponseType(typeof(APIResponse<GetProductDto>), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(APIErrorResponse), StatusCodes.Status404NotFound)]
-        //public async Task<IActionResult> Add([FromForm] ProductCreateDto productCreateDto)
-        //{
-        //    try
-        //    {
-        //        if (!ModelState.IsValid)
-        //        {
-        //            return BadRequest(new APIErrorResponse(400, "Invalid expense data"));
-        //        }
+    //    [HttpPost]
+    //    [Consumes("multipart/form-data")]
+    //    [ProducesResponseType(typeof(APIResponse<GetProductDto>), StatusCodes.Status200OK)]
+    //    [ProducesResponseType(typeof(APIErrorResponse), StatusCodes.Status404NotFound)]
+    //    public async Task<IActionResult> Add([FromForm] ProductCreateDto productCreateDto)
+    //    {
+    //        try
+    //        {
+    //            if (!ModelState.IsValid)
+    //            {
+    //                return BadRequest(new APIErrorResponse(400, "Invalid expense data"));
+    //            }
 
-        //        var product = productCreateDto.Adapt<Product>();
-        //        await _unitOfWork.ProductRepository.AddAsync(product);
+    //            var product = productCreateDto.Adapt<Product>();
+    //            await _unitOfWork.ProductRepository.AddAsync(product);
 
-        //        if (productCreateDto.Photos?.Any() == true)
-        //        {
-        //            var (IsSuccess, ErrorMessage) = await UploadFiles(product.Id, productCreateDto.Photos);
-        //            if (!IsSuccess)
-        //            {
-        //                return BadRequest(new APIErrorResponse(400, ErrorMessage));
-        //            }
-        //        }
+    //            if (productCreateDto.Photos?.Any() == true)
+    //            {
+    //                var (IsSuccess, ErrorMessage) = await UploadFiles(product.Id, productCreateDto.Photos);
+    //                if (!IsSuccess)
+    //                {
+    //                    return BadRequest(new APIErrorResponse(400, ErrorMessage));
+    //                }
+    //            }
 
-        //        await _unitOfWork.SaveChangesAsync();
+    //            await _unitOfWork.SaveChangesAsync();
 
-        //        var createdProduct = product.Adapt<GetProductDto>();
-        //        return CreatedAtAction(nameof(GetById), new { id = product.Id },
-        //            new APIResponse<GetProductDto>(createdProduct, "Product created successfully"));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error creating expense");
-        //        return StatusCode(500, new APIErrorResponse(500, DefaultErrorMessage));
-        //    }
-        //}
-        //private async Task<(bool IsSuccess, string ErrorMessage)> UploadFiles(Guid productId, IFormFileCollection files)
-        //{
-        //    try
-        //    {
-        //        if (files.Count > _fileUploadSettings.MaxFileUploadLimit)
-        //        {
-        //            return (false, $"Maximum {_fileUploadSettings.MaxFileUploadLimit} files can be uploaded");
-        //        }
+    //            var createdProduct = product.Adapt<GetProductDto>();
+    //            return CreatedAtAction(nameof(GetById), new { id = product.Id },
+    //                new APIResponse<GetProductDto>(createdProduct, "Product created successfully"));
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            _logger.LogError(ex, "Error creating expense");
+    //            return StatusCode(500, new APIErrorResponse(500, DefaultErrorMessage));
+    //        }
+    //    }
+    //    private async Task<(bool IsSuccess, string ErrorMessage)> UploadFiles(Guid productId, IFormFileCollection files)
+    //    {
+    //        try
+    //        {
+    //            if (files.Count > _fileUploadSettings.MaxFileUploadLimit)
+    //            {
+    //                return (false, $"Maximum {_fileUploadSettings.MaxFileUploadLimit} files can be uploaded");
+    //            }
 
-        //        foreach (var file in files)
-        //        {
-        //            if (file.Length > _fileUploadSettings.MaxFileSize)
-        //            {
-        //                return (false, $"File {file.FileName} exceeds maximum size of {_fileUploadSettings.MaxFileSize / 1024 / 1024}MB");
-        //            }
+    //            foreach (var file in files)
+    //            {
+    //                if (file.Length > _fileUploadSettings.MaxFileSize)
+    //                {
+    //                    return (false, $"File {file.FileName} exceeds maximum size of {_fileUploadSettings.MaxFileSize / 1024 / 1024}MB");
+    //                }
 
-        //            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-        //            if (!_fileUploadSettings.AllowedFileTypes.Contains(extension))
-        //            {
-        //                return (false, $"File type {extension} is not allowed");
-        //            }
-        //        }
+    //                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+    //                if (!_fileUploadSettings.AllowedFileTypes.Contains(extension))
+    //                {
+    //                    return (false, $"File type {extension} is not allowed");
+    //                }
+    //            }
 
-        //        var source = Path.Combine( "Products", productId.ToString());
-        //        var filePaths = await _imageManagementService.AddPhotoAsync(files, source);
+    //            var source = Path.Combine("Products", productId.ToString());
+    //            var filePaths = await _imageManagementService.AddPhotoAsync(files, source);
 
-        //        var productImages = filePaths.Select(filePath => new Photo
-        //        {
-        //            ProductId = productId,
-        //            ImageName = filePath,
-        //            UploadedAt = DateTime.UtcNow,
+    //            var productImages = filePaths.Select(filePath => new Photo
+    //            {
+    //                ProductId = productId,
+    //                ImageName = filePath,
+    //                UploadedAt = DateTime.UtcNow,
 
-        //        }).ToList();
+    //            }).ToList();
 
 
 
-        //        await _unitOfWork.PhotoRepository.AddRangeAsync(productImages.ToArray());
-        //        return (true, string.Empty);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error uploading files for expense: {ExpenseId}", productId);
-        //        return (false, "Failed to upload files");
-        //    }
-        //}
+    //            await _unitOfWork.PhotoRepository.AddRangeAsync(productImages.ToArray());
+    //            return (true, string.Empty);
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            _logger.LogError(ex, "Error uploading files for expense: {ExpenseId}", productId);
+    //            return (false, "Failed to upload files");
+    //        }
+    //    }
     }
 }
