@@ -1,7 +1,4 @@
 ﻿using TechNest.Application.Interfaces;
-using Mapster;
-using MapsterMapper;
-using System.Reflection;
 using TechNest.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using TechNest.Application.Services;
@@ -16,12 +13,12 @@ namespace TechNest.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-
             // Register the Repositories and UnitOfWork
             services.AddScoped(typeof(IRepositores<>), typeof(Repository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-
+            // Register AutoMapper with specific extension method
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // Register the PhysicalFileProvider
             services.AddSingleton<IFileProvider>(
@@ -30,18 +27,7 @@ namespace TechNest.Infrastructure
             // Register other services
             services.AddSingleton<IImageManagmentService, ImageManagmentService>();
 
-            return services.RegisterDbContext(configuration)
-                           .AddMapstarConfig()
-                           .PendingMigrations();
-        }
-        private static IServiceCollection AddMapstarConfig(this IServiceCollection services)
-        {
-            //Add mapster
-            var mappingConfig = TypeAdapterConfig.GlobalSettings;
-            mappingConfig.Scan(Assembly.GetExecutingAssembly());
-            services.AddSingleton<IMapper>(new Mapper(mappingConfig));
-
-            return services;
+            return services.RegisterDbContext(configuration).PendingMigrations();
         }
 
         private static IServiceCollection PendingMigrations(this IServiceCollection services)
@@ -75,8 +61,6 @@ namespace TechNest.Infrastructure
                  options.UseSqlServer(connectionString));
             return services;
         }
-
-
     }
 
 

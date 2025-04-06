@@ -1,17 +1,21 @@
-﻿using Mapster;
-using TechNest.Domain.Entites;
+﻿using AutoMapper;
+using TechNest.Application.DTOs.Category;
+using TechNest.Application.Interfaces;
+
 using Microsoft.AspNetCore.Mvc;
 using TechNest.API.APIResponse;
-using TechNest.Application.Interfaces;
-using TechNest.Application.DTOs.Category;
+using TechNest.Domain.Entites;
 
 namespace TechNest.API.Controllers
 {
-
     public class CategoriesController : BaseController
     {
-        public CategoriesController(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+        private readonly IMapper _mapper;
 
+        public CategoriesController(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        {
+            _mapper = mapper;
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -22,7 +26,7 @@ namespace TechNest.API.Controllers
                 if (categories == null)
                     return NotFound(new APIErrorResponse(404, "No categories found"));
 
-                var mappedCategories = categories.Adapt<List<CategoryGetDto>>();
+                var mappedCategories = _mapper.Map<List<CategoryGetDto>>(categories);
                 return Ok(new APIResponse<List<CategoryGetDto>>(mappedCategories, "Categories retrieved successfully"));
             }
             catch (Exception ex)
@@ -40,7 +44,7 @@ namespace TechNest.API.Controllers
                 if (category == null)
                     return NotFound(new APIErrorResponse(404, $"Category with ID {id} not found"));
 
-                var mappedCategory = category.Adapt<CategoryGetDto>();
+                var mappedCategory = _mapper.Map<CategoryGetDto>(category);
                 return Ok(mappedCategory);
             }
             catch (Exception ex)
@@ -48,7 +52,6 @@ namespace TechNest.API.Controllers
                 return StatusCode(500, new APIErrorResponse(500, DefaultErrorMessage));
             }
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] CategoryCreateDto categoryDto)
@@ -58,12 +61,12 @@ namespace TechNest.API.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(new APIErrorResponse(400, "Invalid Category data"));
 
-                var category = categoryDto.Adapt<Category>();
+                var category = _mapper.Map<Category>(categoryDto);
 
                 await _unitOfWork.CategoryRepository.AddAsync(category);
                 await _unitOfWork.SaveChangesAsync();
 
-                var createdCategory = category.Adapt<CategoryGetDto>();
+                var createdCategory = _mapper.Map<CategoryGetDto>(category);
 
                 return CreatedAtAction(nameof(GetById), new { id = category.Id },
                     new APIResponse<CategoryGetDto>(createdCategory, "Category created successfully"));
@@ -86,7 +89,7 @@ namespace TechNest.API.Controllers
                 if (existingCategory is null)
                     return NotFound(new APIErrorResponse(404, $"Category with ID {id} not found"));
 
-                categoryUpdateDto.Adapt(existingCategory);
+                _mapper.Map(categoryUpdateDto, existingCategory);  // Mapping Update
                 await _unitOfWork.CategoryRepository.UpdateAsync(existingCategory);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -96,7 +99,6 @@ namespace TechNest.API.Controllers
             {
                 return StatusCode(500, new APIErrorResponse(500, DefaultErrorMessage));
             }
-
         }
 
         [HttpDelete("{id:guid}")]
@@ -118,12 +120,8 @@ namespace TechNest.API.Controllers
             }
             catch (Exception ex)
             {
-
                 return StatusCode(500, new APIErrorResponse(500, DefaultErrorMessage));
             }
-
-
         }
     }
-
 }
