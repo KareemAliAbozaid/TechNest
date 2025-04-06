@@ -85,17 +85,11 @@ namespace TechNest.API.Controllers
 
                 var result = await _unitOfWork.ProductRepository.AddAsync(productCreateDto);
 
-   
-
-
-
-
-                return Ok();
+                return Ok(new APIResponse<string>("Product updated successfully"));
             }
             catch (Exception)
             {
-                var errorResponse = new APIErrorResponse(500, "An error occurred while processing your request");
-                return StatusCode(500, errorResponse);
+                return StatusCode(500, DefaultErrorMessage);
             }
         }
 
@@ -111,7 +105,7 @@ namespace TechNest.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new APIErrorResponse(400, ex.Message));
+                return BadRequest(new APIErrorResponse(400, DefaultErrorMessage));
             }
         }
 
